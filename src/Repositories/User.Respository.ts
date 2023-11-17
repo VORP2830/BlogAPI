@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { User, PrismaClient } from '@prisma/client';
-
+import { User } from '@prisma/client';
+import { GenericRepository } from './Generic.Repository';
 
 @Injectable()
-export class UserRepository {
-    constructor() { }
-    private readonly prisma = new PrismaClient();
+export class UserRepository extends GenericRepository<User>{
+    constructor() {
+        super('user');
+    }
 
     async getById(id: number): Promise<User> {
         return await this.prisma.user.findUnique({ where: { id: Number(id) } });
@@ -13,27 +14,5 @@ export class UserRepository {
 
     async getByUserName(userName: string): Promise<User> {
         return await this.prisma.user.findUnique({ where: { userName: String(userName) } });
-    }
-
-    async create(data: User): Promise<User> {
-        return await this.prisma.user.create({
-            data
-        });
-    }
-
-    async update(data: User): Promise<User> {
-        return await this.prisma.user.update({
-            where: { id: Number(data.id) },
-            data: {
-                id: data.id,
-                name: data.name,
-                userName: data.userName,
-                password: data.password,
-            }
-        });
-    }
-
-    async delete(id: number): Promise<User> {
-        return await this.prisma.user.delete({ where: { id: Number(id) } });
     }
 }
